@@ -19,9 +19,7 @@ BattleField::BattleField() {
 }
 
 void BattleField::Setup()
-{
-  
-   
+{   
     GetPlayerChoice();
 }
 
@@ -37,19 +35,25 @@ void BattleField::GetPlayerChoice()
     std::getline(std::cin, choice);
     
     cin >> choice;
-    switch ((choice))
+    int choiceNumber = stoi(choice); //I converted the received input to an integer value 
+    if(choiceNumber <= 0 || choiceNumber > 4) //check if the selected number is a valid number 
     {
-    case "1":
-        CreatePlayerCharacter(choice);
+        choiceNumber = -1;
+        printf("Invalid Value!:\n");
+    }
+    switch (choiceNumber)
+    {
+    case 1:
+        CreatePlayerCharacter(choiceNumber);
         break;
-    case "2":
-        CreatePlayerCharacter(choice);
+    case 2:
+        CreatePlayerCharacter(choiceNumber);
         break;
-    case "3":
-        CreatePlayerCharacter(choice);
+    case 3:
+        CreatePlayerCharacter(choiceNumber);
         break;
-    case "4":
-        CreatePlayerCharacter(choice);
+    case 4:
+        CreatePlayerCharacter(choiceNumber);
         break;
     default:
         GetPlayerChoice();
@@ -60,7 +64,7 @@ void BattleField::GetPlayerChoice()
 void BattleField::CreatePlayerCharacter(int classIndex)
 {
 
-    Types::CharacterClass* characterClass = (Types::CharacterClass*)classIndex;
+    Types::CharacterClass characterClass = (Types::CharacterClass)classIndex; //I remove the ponter on variable 
     printf("Player Class Choice: {characterClass}");
     
     PlayerCharacter = std::make_shared<Character>(characterClass);
@@ -80,7 +84,7 @@ void BattleField::CreateEnemyCharacter()
     int randomInteger = GetRandomInt(1, 4);
     Types::CharacterClass enemyClass = (Types::CharacterClass)randomInteger;
     printf("Enemy Class Choice: {enemyClass}");
-    EnemyCharacter = new Character(enemyClass);
+    EnemyCharacter = std::make_shared<Character>(enemyClass); // Updated the function to receive its correct value type
     EnemyCharacter->Health = 100;
     PlayerCharacter->BaseDamage = 20;
     PlayerCharacter->PlayerIndex = 1;
@@ -91,10 +95,10 @@ void BattleField::CreateEnemyCharacter()
 void BattleField::StartGame()
 {
     //populates the character variables and targets
-    EnemyCharacter->target = PlayerCharacter;
-    PlayerCharacter->target = EnemyCharacter;
-    AllPlayers->push_back(PlayerCharacter);
-    AllPlayers->push_back(EnemyCharacter);
+    *EnemyCharacter->target = *PlayerCharacter; //Update reference type to received the other reference
+    *PlayerCharacter->target = *EnemyCharacter; //Update reference type to received the other reference
+    AllPlayers->push_back(*PlayerCharacter); //Update reference type to received the correct reference
+    AllPlayers->push_back(*EnemyCharacter); //Update reference type to received the correct reference
     AlocatePlayers();
     StartTurn();
 

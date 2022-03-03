@@ -8,7 +8,7 @@ class Grid
 public:
 
     Grid(int Lines, int Columns);
-    ~Grid();
+    ~Grid(); 
 
     std::vector<Types::GridBox> grids;
 

@@ -3,28 +3,30 @@
 #include "Character.h"
 #include "Types.h"
 
+using namespace std; //transfer namespace to from cpp file to header
+
 class Character
 {
 public:
 
-    Character(Types::CharacterClass charcaterClass);
+    Character(Types::CharacterClass characterClass);
     ~Character();
-
     
     float Health;
     float BaseDamage;
     float DamageMultiplier;
-    //public GridBox currentBox;
     int PlayerIndex;
-    //public Character Target{ get; set; }
 
+    //Character Target{ get; set; }
     Character* target;
-
-    bool IsDead;
-    char Icon;
-
+    //GridBox currentBox;
     Types::GridBox currentBox;
+    
+    bool IsDead;
+    char Icon;   
 
+//Functions
+    
     bool TakeDamage(float amount);
 
     int getIndex(vector<Types::GridBox*> v, int index);

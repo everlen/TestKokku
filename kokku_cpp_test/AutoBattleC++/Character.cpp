@@ -1,14 +1,19 @@
-#include "Grid.h"
-#include "Character.h"
-#include "Types.h"
-#include "Character.h"
+#include "Character.h" //I cleaned out the redundant includes and kept them only in the header file
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-Character::Character(Types::CharacterClass charcaterClass)
+Character::Character(Types::CharacterClass characterClass)
 {
-
+    //Set a base value in variables on class
+    Health = 100;
+    BaseDamage = 20;
+    PlayerIndex = 0;
+    DamageMultiplier = 1.0f;
+    IsDead = false;
+    Icon = 'X';
+    
+    currentBox = {-1, -1, false, -1}; //Fix constructor adding a initialization in this variable
+    target = nullptr; //Fix warning not initializate
 }
 
 Character::~Character() 
@@ -32,7 +37,7 @@ void Character::Die()
 	//TODO >> end the game?
 }
 
-void Character::WalkTo(bool CanWalk) 
+void Character::WalkTo(bool canWalk) 
 {
 
 }

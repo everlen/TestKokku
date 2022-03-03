@@ -10,12 +10,12 @@ public:
         bool ocupied;
         int Index;
 
-        GridBox(int x, int y, bool ocupied, int index)
+        GridBox(int AuxX, int AuxY, bool AuxOcupied, int AuxIndex) //I changed the name of the parameters for better definition 
         {
-            xIndex = x;
-            yIndex = y;
-            ocupied = ocupied;
-            Index = index;
+            xIndex = AuxX;
+            yIndex = AuxY;
+            ocupied = AuxOcupied;
+            Index = AuxIndex;
         }
     };
 
