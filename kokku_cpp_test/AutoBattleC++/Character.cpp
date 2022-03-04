@@ -11,9 +11,10 @@ Character::Character(Types::CharacterClass characterClass)
     DamageMultiplier = 1.0f;
     IsDead = false;
     Icon = 'X';
-    
+    string ClassNames[] = {"Paladin", "Warrior", "Cleric", "Archer"}; //Add vector of class names
+    ClassName = ClassNames[characterClass -1]; //Set name Class in character constructor
     currentBox = *new Types::GridBox(); //Fix constructor adding a initialization in this variable
-    target = nullptr; //Fix warning not initializate
+    target = this; //Fix warning not initializate
 }
 
 Character::~Character() 

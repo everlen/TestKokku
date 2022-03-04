@@ -2,6 +2,7 @@
 #include "Grid.h"
 #include "Character.h"
 #include "Types.h"
+#include <string>
 
 using namespace std; //transfer namespace to from cpp file to header
 
@@ -16,6 +17,7 @@ public:
     float BaseDamage;
     float DamageMultiplier;
     int PlayerIndex;
+    string ClassName; //Add your class name to better control
 
     //Character Target{ get; set; }
     Character* target;

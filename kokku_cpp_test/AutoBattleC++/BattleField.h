@@ -14,13 +14,13 @@ public:
 	Grid* grid;
 	Types::GridBox* PlayerCurrentLocation;
 	Types::GridBox* EnemyCurrentLocation;
-	list<Character>* AllPlayers;
-	shared_ptr<Character> PlayerCharacter;
-	//Character* PlayerCharacter;
-	shared_ptr<Character> EnemyCharacter;
-	int currentTurn;
+	list<Character*>* AllPlayers; // Update list type to list of ponters
+	Character* PlayerCharacter; // Update type of variable to simple ponter
+	Character* EnemyCharacter; // Update type of variable to simple ponter
+	int currentTurn = 0;
 	int numberOfPossibleTiles;
-
+	int numberOfXGrids = 5;
+	int numberOfYGrids = 5;
 
 	void Setup();
 
@@ -37,8 +37,6 @@ public:
 	void HandleTurn();
 
 	int GetRandomInt(int min, int max);
-
-	void AlocatePlayers();
 
 	void AlocatePlayerCharacter();
 

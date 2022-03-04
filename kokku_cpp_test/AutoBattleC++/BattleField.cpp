@@ -11,10 +11,10 @@ using namespace std;
 
 BattleField::BattleField() {
     
-    grid = new Grid(5, 5);
-    AllPlayers = new list<Character>();
+    grid = new Grid(numberOfXGrids, numberOfYGrids);
+    AllPlayers = new list<Character*>();
     int currentTurn = 0;
-    int numberOfPossibleTiles = grid->grids.size();
+    int numberOfPossibleTiles = grid->TotalGrids; //fix the incorrect assignment had invalid value chance
     Setup();
 }
 
@@ -63,33 +63,32 @@ void BattleField::GetPlayerChoice()
 
 void BattleField::CreatePlayerCharacter(int classIndex)
 {
-
-    Types::CharacterClass characterClass = (Types::CharacterClass)classIndex; //I remove the ponter on variable 
-    printf("Player Class Choice: {characterClass}");
-    
-    PlayerCharacter = std::make_shared<Character>(characterClass);
+    Types::CharacterClass characterClass = (Types::CharacterClass)classIndex; //I remove the ponter on variable    
+    PlayerCharacter = new Character(characterClass); // Update function to new variable type
     
     PlayerCharacter->Health = 100;
     PlayerCharacter->BaseDamage = 20;
     PlayerCharacter->PlayerIndex = 0;
+    
+    printf("Player Class Choice: %s \n", PlayerCharacter->ClassName.c_str());
 
     CreateEnemyCharacter();
-
 }
 
 void BattleField::CreateEnemyCharacter()
 {
-    //randomly choose the enemy class and set up vital variables
-    
+    //randomly choose the enemy class and set up vital variables    
     int randomInteger = GetRandomInt(1, 4);
     Types::CharacterClass enemyClass = (Types::CharacterClass)randomInteger;
-    printf("Enemy Class Choice: {enemyClass}");
-    EnemyCharacter = std::make_shared<Character>(enemyClass); // Updated the function to receive its correct value type
+    
+    EnemyCharacter = new Character(enemyClass); // Update function to new variable type
     EnemyCharacter->Health = 100;
     PlayerCharacter->BaseDamage = 20;
     PlayerCharacter->PlayerIndex = 1;
-    StartGame();
 
+    printf("Enemy Class Choice: %s \n", EnemyCharacter->ClassName.c_str()); //Update print location to received current infos of enemy
+    
+    StartGame();
 }
 
 void BattleField::StartGame()
@@ -97,9 +96,9 @@ void BattleField::StartGame()
     //populates the character variables and targets
     *EnemyCharacter->target = *PlayerCharacter; //Update reference type to received the other reference
     *PlayerCharacter->target = *EnemyCharacter; //Update reference type to received the other reference
-    AllPlayers->push_back(*PlayerCharacter); //Update reference type to received the correct reference
-    AllPlayers->push_back(*EnemyCharacter); //Update reference type to received the correct reference
-    AlocatePlayers();
+    AllPlayers->push_back(PlayerCharacter); //Update reference type to received the correct reference
+    AllPlayers->push_back(EnemyCharacter); //Update reference type to received the correct reference
+    AlocatePlayerCharacter(); // Alter call function to remove redundance function
     StartTurn();
 
 }
@@ -110,10 +109,9 @@ void BattleField::StartTurn() {
     {
         //AllPlayers.Sort();  
     }
-    std::list<Character>::iterator it;
-
-    for (it = AllPlayers->begin(); it != AllPlayers->end(); ++it) {
-        it->StartTurn(grid);
+    
+    for (int i = 0; i < AllPlayers->size(); i++) { //Simplified the for
+        AllPlayers[i].get()->StartTurn(grid);
     }
 
     currentTurn++;
@@ -151,29 +149,21 @@ void BattleField::HandleTurn()
 int BattleField::GetRandomInt(int min, int max)
 {
     
-    int index = GetRandomInt(min, max);
+    int index = min + rand() % max; //Fix the infinity loop
     return index;
-}
-
-void BattleField::AlocatePlayers()
-{
-    AlocatePlayerCharacter();
-
 }
 
 void BattleField::AlocatePlayerCharacter()
 {
-    int random = 0;
-    auto l_front = grid->grids.begin();
-    advance(l_front, random);
-    Types::GridBox* RandomLocation = &*l_front;
+    int Random = GetRandomInt(0, grid->TotalGrids-1); //Update to random number get value of dynamic grids numbers
+    Types::GridBox* RandomLocation = &grid->grids[Random]; //I simplified the method to get RandomLocation
 
     if (!RandomLocation->ocupied)
     {
         //Types::GridBox* PlayerCurrentLocation = RandomLocation;
-        PlayerCurrentLocation = &*l_front;
-        l_front->ocupied = true;
-        PlayerCharacter->currentBox = *l_front;
+        PlayerCurrentLocation = RandomLocation;
+        RandomLocation->ocupied = true;
+        PlayerCharacter->currentBox = *RandomLocation;
         AlocateEnemyCharacter();
     }
     else
@@ -185,17 +175,15 @@ void BattleField::AlocatePlayerCharacter()
 void BattleField::AlocateEnemyCharacter()
 {
     
-    int random = 24;
-    auto l_front = grid->grids.begin();
-    advance(l_front, random);
-    Types::GridBox* RandomLocation = &*l_front;
+    int Random = GetRandomInt(0, grid->TotalGrids-1); //Update to random number get value of dynamic grids numbers
+    Types::GridBox* RandomLocation = &grid->grids[Random]; //I simplified the method to get RandomLocation
     
     if (!RandomLocation->ocupied)
     {
-        EnemyCurrentLocation = &*l_front;
-        l_front->ocupied = true;
-        EnemyCharacter->currentBox = *l_front;
-        grid->drawBattlefield(5, 5);
+        EnemyCurrentLocation = RandomLocation;
+        RandomLocation->ocupied = true;
+        EnemyCharacter->currentBox = *RandomLocation;
+        grid->drawBattlefield(numberOfXGrids, numberOfYGrids);
     }
     else
     {
