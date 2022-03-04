@@ -12,7 +12,7 @@ Character::Character(Types::CharacterClass characterClass)
     IsDead = false;
     Icon = 'X';
     
-    currentBox = {-1, -1, false, -1}; //Fix constructor adding a initialization in this variable
+    currentBox = *new Types::GridBox(); //Fix constructor adding a initialization in this variable
     target = nullptr; //Fix warning not initializate
 }
 
@@ -61,15 +61,14 @@ void Character::StartTurn(Grid* battlefield) {
             
             if (currentBox.xIndex > target->currentBox.xIndex)
             {
-                if(find(battlefield->grids.begin(), battlefield->grids.end(), currentBox.Index - 1) != battlefield->grids.end())
-                
+                if(currentBox.index - 1 != battlefield->grids.end()->index) // Fix incorrect use to "!="            
                 {
                     currentBox.ocupied = false;
-                    battlefield->grids[currentBox.Index] = currentBox;
+                    battlefield->grids[currentBox.index] = currentBox;
 
-                    currentBox = (battlefield->grids[currentBox.Index - 1]);
+                    currentBox = (battlefield->grids[currentBox.index - 1]);
                     currentBox.ocupied = true;
-                    battlefield->grids[currentBox.Index] = currentBox;
+                    battlefield->grids[currentBox.index] = currentBox;
                     //Console.WriteLine($"Player {PlayerIndex} walked left\n");
                     battlefield->drawBattlefield(5, 5);
 
@@ -79,10 +78,10 @@ void Character::StartTurn(Grid* battlefield) {
             else if (currentBox.xIndex < target->currentBox.xIndex)
             {
                 currentBox.ocupied = false;
-                battlefield->grids[currentBox.Index] = currentBox;
-                currentBox = (battlefield->grids[currentBox.Index + 1]);
+                battlefield->grids[currentBox.index] = currentBox;
+                currentBox = (battlefield->grids[currentBox.index + 1]);
                 return;
-                battlefield->grids[currentBox.Index] = currentBox;
+                battlefield->grids[currentBox.index] = currentBox;
                 //Console.WriteLine($"Player {PlayerIndex} walked right\n");
                 battlefield->drawBattlefield(5, 5);
             }
@@ -91,20 +90,20 @@ void Character::StartTurn(Grid* battlefield) {
             {
                 battlefield->drawBattlefield(5, 5);
                 currentBox.ocupied = false;
-                battlefield->grids[currentBox.Index] = currentBox;
-                currentBox = battlefield->grids[(currentBox.Index - battlefield->xLenght)];
+                battlefield->grids[currentBox.index] = currentBox;
+                currentBox = battlefield->grids[(currentBox.index - battlefield->xLenght)];
                 currentBox.ocupied = true;
-                battlefield->grids[currentBox.Index] = currentBox;
+                battlefield->grids[currentBox.index] = currentBox;
                 //Console.WriteLine($"PlayerB {PlayerIndex} walked up\n");
                 return;
             }
             else if (currentBox.yIndex < target->currentBox.yIndex)
             {
                 currentBox.ocupied = true;
-                battlefield->grids[currentBox.Index] = currentBox;
-                currentBox = battlefield->grids[currentBox.Index + battlefield->xLenght];
+                battlefield->grids[currentBox.index] = currentBox;
+                currentBox = battlefield->grids[currentBox.index + battlefield->xLenght];
                 currentBox.ocupied = false;
-                battlefield->grids[currentBox.Index] = currentBox;
+                battlefield->grids[currentBox.index] = currentBox;
                 //Console.WriteLine($"Player {PlayerIndex} walked down\n");
                 battlefield->drawBattlefield(5, 5);
 
@@ -116,7 +115,7 @@ void Character::StartTurn(Grid* battlefield) {
 
 bool Character::CheckCloseTargets(Grid* battlefield)
 {
-
+    return false;
 }
 
 void Character::Attack(Character* target) 

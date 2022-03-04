@@ -8,14 +8,21 @@ public:
         int xIndex;
         int yIndex;
         bool ocupied;
-        int Index;
+        int index; //Rename this variable
 
-        GridBox(int AuxX, int AuxY, bool AuxOcupied, int AuxIndex) //I changed the name of the parameters for better definition 
+        GridBox(int auxXIndex, int auxYIndex, bool auxOcupied, int auxIndex) //I changed the constructor to more simple version
         {
-            xIndex = AuxX;
-            yIndex = AuxY;
-            ocupied = AuxOcupied;
-            Index = AuxIndex;
+            xIndex = auxXIndex;
+            yIndex = auxYIndex;
+            ocupied = auxOcupied;
+            index = auxIndex;
+        }
+        GridBox() //I add the constructor with more simple version
+        {
+            xIndex = -1;
+            yIndex = -1;
+            ocupied = false;
+            index = -1;
         }
     };
 

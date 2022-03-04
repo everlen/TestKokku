@@ -9,11 +9,14 @@ Grid::Grid(int Lines, int Columns)
     //Console.WriteLine("The battle field has been created\n");
     for (int i = 0; i < Lines; i++)
     {
-
         for (int j = 0; j < Columns; j++)
         {
-            Types::GridBox* newBox = new Types::GridBox(i, j, false, (Columns * i + j));
-            grids.insert(grids.end(), newBox);
+            Types::GridBox* newBox = new Types::GridBox();
+            newBox->index = Columns * i + j;
+            newBox->ocupied = false;
+            newBox->yIndex = j;
+            newBox->xIndex = i;
+            grids.insert(grids.end(), *newBox); //Fix reference to pointer address
             //Console.Write($"{newBox.Index}\n");
         }
     }

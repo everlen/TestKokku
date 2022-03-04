@@ -121,7 +121,7 @@ void BattleField::StartTurn() {
 }
 
 void BattleField::HandleTurn()
-{
+{ 
     if (PlayerCharacter->Health == 0)
     {
         return;
@@ -201,6 +201,4 @@ void BattleField::AlocateEnemyCharacter()
     {
         AlocateEnemyCharacter();
     }
-
-
 }
