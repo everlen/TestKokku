@@ -18,5 +18,6 @@ public:
     
     // prints the matrix that indicates the tiles of the battlefield
     void drawBattlefield(int Lines, int Columns, int PlayerIndexGrid, char PlayerIcon, char EnemyIcon); //Edit parameters to more details of characters
+    Types::GridBox GetGridInLocation(int x, int y); // create function to return grid item in X and Y position
 };
 

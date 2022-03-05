@@ -26,6 +26,7 @@ public:
     
     bool IsDead;
     char Icon;
+    int Reach;
     bool IsEnemy = true;
 
 //Functions
@@ -42,7 +43,7 @@ public:
 
     bool CheckCloseTargets(Grid* battlefield);
 
-    void Attack(Character* target);
+    float Attack(Character* target);
 
 
 };

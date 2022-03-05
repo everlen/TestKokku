@@ -52,14 +52,11 @@ void BattleField::CreatePlayerCharacter(int classIndex)
 {
     Types::CharacterClass characterClass = (Types::CharacterClass)classIndex; //I remove the ponter on variable    
     PlayerCharacter = new Character(characterClass); // Update function to new variable type
-    
-    PlayerCharacter->Health = 100;
-    PlayerCharacter->BaseDamage = 20;
-    PlayerCharacter->PlayerIndex = 0;
     PlayerCharacter->Icon = 'P';
     PlayerCharacter->IsEnemy = false;
+    PlayerCharacter->PlayerIndex = 0;
     
-    printf("Player Class Choice: %s \n", PlayerCharacter->ClassName.c_str());
+    printf("Player as 'P' | Class Choice: %s \n", PlayerCharacter->ClassName.c_str());
 
     CreateEnemyCharacter();
 }
@@ -71,31 +68,30 @@ void BattleField::CreateEnemyCharacter()
     Types::CharacterClass enemyClass = (Types::CharacterClass)randomInteger;
     
     EnemyCharacter = new Character(enemyClass); // Update function to new variable type
-    EnemyCharacter->Health = 100;
     EnemyCharacter->Icon = 'E';
     EnemyCharacter->IsEnemy = true;
-    PlayerCharacter->BaseDamage = 20;
-    PlayerCharacter->PlayerIndex = 1;
+    EnemyCharacter->PlayerIndex = 1;
 
-    printf("Enemy Class Choice: %s \n", EnemyCharacter->ClassName.c_str()); //Update print location to received current infos of enemy
+    printf("Enemy as 'E' | Class Choice: %s \n", EnemyCharacter->ClassName.c_str()); //Update print location to received current infos of enemy
 }
 
 void BattleField::StartGame()
 {
     //populates the character variables and targets
-    *EnemyCharacter->target = *PlayerCharacter; //Update reference type to received the other reference
-    *PlayerCharacter->target = *EnemyCharacter; //Update reference type to received the other reference
-    AllPlayers.push_back(PlayerCharacter); //Update reference type to received the correct reference
-    AllPlayers.push_back(EnemyCharacter); //Update reference type to received the correct reference
+ 
+    EnemyCharacter->target = PlayerCharacter; //Update reference type to right received the other ponter
+    PlayerCharacter->target = EnemyCharacter; //Update reference type to right received the other ponter
     AlocatePlayerCharacter(); // Alter call function to remove redundance function
     AlocateEnemyCharacter(); // Update call location to more control
+    AllPlayers.insert(AllPlayers.begin(), PlayerCharacter); //Update reference type to received the correct reference 
+    AllPlayers.insert(AllPlayers.begin(), EnemyCharacter); //Update reference type to received the correct reference
     //currentTurn = 0;
     HandleTurn(); //Start game with handle turn to more control
 }
 
 void BattleField::StartTurn() {
 
-    printf("----TURN %i----", currentTurn);
+    printf("----TURN %i----\n", currentTurn+1);
     if (currentTurn == 0) // I make a sort start character function
     {
         int index =  GetRandomInt(0, 2);
@@ -119,18 +115,19 @@ void BattleField::HandleTurn()
 {
     if(currentTurn>0)
     {
-        if (PlayerCharacter->Health == 0)
+        if(PlayerCharacter->Health <= 0 && EnemyCharacter->Health <= 0)
         {
+            printf("NO CONTEXT.\n");
             return;
         }
-        else if (EnemyCharacter->Health == 0)
+        else if (PlayerCharacter->Health <= 0)
         {
-            printf("\n");
-
-            // endgame?
-
-            printf("\n");
-
+            printf("YOU LOSE!\n");
+            return;
+        }
+        else if (EnemyCharacter->Health <= 0)
+        {
+            printf("YOU WIN!");
             return;
         }
         else
