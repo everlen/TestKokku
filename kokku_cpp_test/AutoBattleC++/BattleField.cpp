@@ -3,7 +3,6 @@
 #include "Types.h"
 #include "Character.h"
 #include <iostream>
-#include "BattleField.h"
 #include <list>
 #include <string>
 
@@ -12,10 +11,13 @@ using namespace std;
 BattleField::BattleField() {
     
     grid = new Grid(numberOfXGrids, numberOfYGrids);
-    AllPlayers = new list<Character*>();
+    AllPlayers = {};
+    PlayerCurrentLocation = nullptr; // initialized all variables in cronstruct like nullptr
+    EnemyCurrentLocation = nullptr;
+    PlayerCharacter = nullptr;
+    EnemyCharacter = nullptr;
     int currentTurn = 0;
     int numberOfPossibleTiles = grid->TotalGrids; //fix the incorrect assignment had invalid value chance
-    Setup();
 }
 
 void BattleField::Setup()
@@ -28,36 +30,21 @@ void BattleField::GetPlayerChoice()
     //asks for the player to choose between for possible classes via console.
     printf("Choose Between One of this Classes:\n");
 
-    printf("[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer");
+    printf("[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer\n");
     //store the player choice in a variable
-    std::string choice;
-
-    std::getline(std::cin, choice);
+    int choice;     
+    cin >> choice; //Update input method
     
-    cin >> choice;
-    int choiceNumber = stoi(choice); //I converted the received input to an integer value 
-    if(choiceNumber <= 0 || choiceNumber > 4) //check if the selected number is a valid number 
+    if(choice > 0 && choice <= 4) //check if the selected number is a valid number 
     {
-        choiceNumber = -1;
-        printf("Invalid Value!:\n");
+        CreatePlayerCharacter(choice);
+        choice = -1;
     }
-    switch (choiceNumber)
+    else // remove switch 
     {
-    case 1:
-        CreatePlayerCharacter(choiceNumber);
-        break;
-    case 2:
-        CreatePlayerCharacter(choiceNumber);
-        break;
-    case 3:
-        CreatePlayerCharacter(choiceNumber);
-        break;
-    case 4:
-        CreatePlayerCharacter(choiceNumber);
-        break;
-    default:
-        GetPlayerChoice();
-        break;
+        choice = -1;
+        printf("Invalid Value! Start game with default class:\n");
+        CreatePlayerCharacter(1);
     }
 }
 
@@ -69,6 +56,8 @@ void BattleField::CreatePlayerCharacter(int classIndex)
     PlayerCharacter->Health = 100;
     PlayerCharacter->BaseDamage = 20;
     PlayerCharacter->PlayerIndex = 0;
+    PlayerCharacter->Icon = 'P';
+    PlayerCharacter->IsEnemy = false;
     
     printf("Player Class Choice: %s \n", PlayerCharacter->ClassName.c_str());
 
@@ -83,12 +72,12 @@ void BattleField::CreateEnemyCharacter()
     
     EnemyCharacter = new Character(enemyClass); // Update function to new variable type
     EnemyCharacter->Health = 100;
+    EnemyCharacter->Icon = 'E';
+    EnemyCharacter->IsEnemy = true;
     PlayerCharacter->BaseDamage = 20;
     PlayerCharacter->PlayerIndex = 1;
 
     printf("Enemy Class Choice: %s \n", EnemyCharacter->ClassName.c_str()); //Update print location to received current infos of enemy
-    
-    StartGame();
 }
 
 void BattleField::StartGame()
@@ -96,60 +85,79 @@ void BattleField::StartGame()
     //populates the character variables and targets
     *EnemyCharacter->target = *PlayerCharacter; //Update reference type to received the other reference
     *PlayerCharacter->target = *EnemyCharacter; //Update reference type to received the other reference
-    AllPlayers->push_back(PlayerCharacter); //Update reference type to received the correct reference
-    AllPlayers->push_back(EnemyCharacter); //Update reference type to received the correct reference
+    AllPlayers.push_back(PlayerCharacter); //Update reference type to received the correct reference
+    AllPlayers.push_back(EnemyCharacter); //Update reference type to received the correct reference
     AlocatePlayerCharacter(); // Alter call function to remove redundance function
-    StartTurn();
-
+    AlocateEnemyCharacter(); // Update call location to more control
+    //currentTurn = 0;
+    HandleTurn(); //Start game with handle turn to more control
 }
 
 void BattleField::StartTurn() {
 
-    if (currentTurn == 0)
+    printf("----TURN %i----", currentTurn);
+    if (currentTurn == 0) // I make a sort start character function
     {
-        //AllPlayers.Sort();  
-    }
-    
-    for (int i = 0; i < AllPlayers->size(); i++) { //Simplified the for
-        AllPlayers[i].get()->StartTurn(grid);
+        int index =  GetRandomInt(0, 2);
+        if(index != 0)
+        {
+            Character* Aux = AllPlayers[0];
+            AllPlayers[0] = AllPlayers[1];
+            AllPlayers[1] = Aux;
+        }
     }
 
+    for (int i = 0; i < AllPlayers.size(); i++) { //Simplified the for
+        AllPlayers[i]->StartTurn(grid);
+    }
+    grid->drawBattlefield(grid->xLength, grid->yLength, PlayerCharacter->currentBox.index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
     currentTurn++;
     HandleTurn();
 }
 
 void BattleField::HandleTurn()
-{ 
-    if (PlayerCharacter->Health == 0)
+{
+    if(currentTurn>0)
     {
-        return;
-    }
-    else if (EnemyCharacter->Health == 0)
-    {
-        printf("\n");
+        if (PlayerCharacter->Health == 0)
+        {
+            return;
+        }
+        else if (EnemyCharacter->Health == 0)
+        {
+            printf("\n");
 
-        // endgame?
+            // endgame?
 
-        printf("\n");
+            printf("\n");
 
-        return;
+            return;
+        }
+        else
+        {
+            printf("\n");
+            printf("Send 'P' to start the next turn...\n"); //Update method to pass turn
+            printf("\n");
+            while(cin.get() != 'p');
+            
+            StartTurn();
+        }
     }
     else
     {
+        grid->drawBattlefield(grid->xLength, grid->yLength, PlayerCharacter->currentBox.index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
         printf("\n");
-        printf("Click on any key to start the next turn...\n");
+        printf("Send 'P' to start game...\n"); //Update method to pass turn
         printf("\n");
-
-        //TODO
-        //ConsoleKeyInfo key = Console.ReadKey();
+        while(cin.get() != 'p');
+        
         StartTurn();
     }
 }
 
 int BattleField::GetRandomInt(int min, int max)
-{
-    
-    int index = min + rand() % max; //Fix the infinity loop
+{    
+    int index = std::rand() % max+min; //Fix the infinity loop
     return index;
 }
 
@@ -164,7 +172,6 @@ void BattleField::AlocatePlayerCharacter()
         PlayerCurrentLocation = RandomLocation;
         RandomLocation->ocupied = true;
         PlayerCharacter->currentBox = *RandomLocation;
-        AlocateEnemyCharacter();
     }
     else
     {
@@ -183,7 +190,6 @@ void BattleField::AlocateEnemyCharacter()
         EnemyCurrentLocation = RandomLocation;
         RandomLocation->ocupied = true;
         EnemyCharacter->currentBox = *RandomLocation;
-        grid->drawBattlefield(numberOfXGrids, numberOfYGrids);
     }
     else
     {

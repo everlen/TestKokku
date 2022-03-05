@@ -14,13 +14,13 @@ public:
 	Grid* grid;
 	Types::GridBox* PlayerCurrentLocation;
 	Types::GridBox* EnemyCurrentLocation;
-	list<Character*>* AllPlayers; // Update list type to list of ponters
+	std::vector<Character*> AllPlayers; // Update list type to vector of ponters
 	Character* PlayerCharacter; // Update type of variable to simple ponter
 	Character* EnemyCharacter; // Update type of variable to simple ponter
 	int currentTurn = 0;
-	int numberOfPossibleTiles;
-	int numberOfXGrids = 5;
-	int numberOfYGrids = 5;
+	int numberOfPossibleTiles = 0;
+	int numberOfXGrids = 10;
+	int numberOfYGrids = 10;
 
 	void Setup();
 

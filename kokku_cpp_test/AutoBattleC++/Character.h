@@ -25,7 +25,8 @@ public:
     Types::GridBox currentBox;
     
     bool IsDead;
-    char Icon;   
+    char Icon;
+    bool IsEnemy = true;
 
 //Functions
     

@@ -4,7 +4,7 @@
 
 Grid::Grid(int Lines, int Columns)
 {
-    xLenght = Lines;
+    xLength = Lines;
     yLength = Columns;
     TotalGrids = 0;
     //Console.WriteLine("The battle field has been created\n");
@@ -30,8 +30,9 @@ Grid::~Grid()
 
 }
 
-void Grid::drawBattlefield(int Lines, int Columns)
+void Grid::drawBattlefield(int Lines, int Columns, int PlayerIndexGrid, char PlayerIcon, char EnemyIcon) //Update parameters to received Icon info
 {
+    printf("\n Battlefield Map \n");
     int AuxCount = 0;
     for (int i = 0; i < Lines; i++)
     {
@@ -40,8 +41,10 @@ void Grid::drawBattlefield(int Lines, int Columns)
             Types::GridBox* currentgrid = &grids[AuxCount]; // use the variable to control progress index
             if (currentgrid->ocupied)
             {
-                //if()
-                printf("[X]\t");
+                if(currentgrid->index == PlayerIndexGrid) //Print character info with your icon
+                    printf("[%c]\t", PlayerIcon);
+                else
+                    printf("[%c]\t", EnemyIcon);
             }
             else
             {

@@ -45,73 +45,103 @@ void Character::WalkTo(bool canWalk)
 
 
 
-void Character::StartTurn(Grid* battlefield) {
-
+void Character::StartTurn(Grid* battlefield)
+{
+    if (CheckCloseTargets(battlefield))
     {
+        Attack(Character::target);
 
-        if (CheckCloseTargets(battlefield))
-        {
-            Attack(Character::target);
-
-
-            return;
-        }
+        if(IsEnemy)
+            printf("Enemy %s attack the player %s \n", ClassName.c_str(), target->ClassName.c_str());
         else
-        {   // if there is no target close enough, calculates in wich direction this character should move to be closer to a possible target
-            
-            
-            if (currentBox.xIndex > target->currentBox.xIndex)
-            {
-                if(currentBox.index - 1 != battlefield->grids.end()->index) // Fix incorrect use to "!="            
-                {
-                    currentBox.ocupied = false;
-                    battlefield->grids[currentBox.index] = currentBox;
-
-                    currentBox = (battlefield->grids[currentBox.index - 1]);
-                    currentBox.ocupied = true;
-                    battlefield->grids[currentBox.index] = currentBox;
-                    //Console.WriteLine($"Player {PlayerIndex} walked left\n");
-                    battlefield->drawBattlefield(5, 5);
-
-                    return;
-                }
-            }
-            else if (currentBox.xIndex < target->currentBox.xIndex)
+            printf("Player %s attack the enemy %s \n", ClassName.c_str(), target->ClassName.c_str());
+    }
+    else
+    {   // if there is no target close enough, calculates in wich direction this character should move to be closer to a possible target
+        if (currentBox.xIndex > target->currentBox.xIndex + 1) //Verify if character is in side grid
+        {
+            if(currentBox.index > 0) // Fix incorrect use to "!="            
             {
                 currentBox.ocupied = false;
                 battlefield->grids[currentBox.index] = currentBox;
-                currentBox = (battlefield->grids[currentBox.index + 1]);
-                return;
-                battlefield->grids[currentBox.index] = currentBox;
-                //Console.WriteLine($"Player {PlayerIndex} walked right\n");
-                battlefield->drawBattlefield(5, 5);
-            }
 
-            if (currentBox.yIndex > target->currentBox.yIndex)
-            {
-                battlefield->drawBattlefield(5, 5);
-                currentBox.ocupied = false;
-                battlefield->grids[currentBox.index] = currentBox;
-                currentBox = battlefield->grids[(currentBox.index - battlefield->xLenght)];
+                currentBox = battlefield->grids[currentBox.index - 1];
                 currentBox.ocupied = true;
                 battlefield->grids[currentBox.index] = currentBox;
-                //Console.WriteLine($"PlayerB {PlayerIndex} walked up\n");
-                return;
+                
+                if(IsEnemy)
+                    printf("\nEnemy %s walked left \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
+                else
+                    printf("\nPlayer %s walked left \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
             }
-            else if (currentBox.yIndex < target->currentBox.yIndex)
+            else
             {
-                currentBox.ocupied = true;
-                battlefield->grids[currentBox.index] = currentBox;
-                currentBox = battlefield->grids[currentBox.index + battlefield->xLenght];
+                printf("Current index invalid");
+            }                
+        }
+        else if (currentBox.xIndex < target->currentBox.xIndex - 1)
+        {
+            if(currentBox.index < battlefield->TotalGrids - 1)
+            {
                 currentBox.ocupied = false;
                 battlefield->grids[currentBox.index] = currentBox;
-                //Console.WriteLine($"Player {PlayerIndex} walked down\n");
-                battlefield->drawBattlefield(5, 5);
-
-                return;
+                
+                currentBox = battlefield->grids[currentBox.index + 1];
+                currentBox.ocupied = true;
+                battlefield->grids[currentBox.index] = currentBox;
+                
+                if(IsEnemy)
+                    printf("\nEnemy %s walked right \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
+                else
+                    printf("\nPlayer %s walked right \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
+            }
+            else
+            {
+                printf("Current index invalid");
+            }                                    
+        }
+        else if (currentBox.yIndex > target->currentBox.yIndex + 1)
+        {
+            if(currentBox.index > 0) // Fix incorrect use to "!="            
+            {
+                currentBox.ocupied = false;
+                battlefield->grids[currentBox.index] = currentBox;
+                currentBox = battlefield->grids[currentBox.index - 1];
+                currentBox.ocupied = true;
+                battlefield->grids[currentBox.index] = currentBox;
+            
+                if(IsEnemy)
+                    printf("\nEnemy %s walked up \n", ClassName.c_str());  //Console.WriteLine($"Enemy {EnemyIndex} walked left\n");
+                else
+                    printf("\nPlayer %s walked up \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
+            }
+            else
+            {
+                printf("Current index invalid");
+            }
+        }
+        else if (currentBox.yIndex < target->currentBox.yIndex - 1)
+        {
+            if(currentBox.index < battlefield->TotalGrids - 1)
+            {
+                currentBox.ocupied = false;
+                battlefield->grids[currentBox.index] = currentBox;
+                currentBox = battlefield->grids[currentBox.index + 1];
+                currentBox.ocupied = true;
+                battlefield->grids[currentBox.index] = currentBox;
+            
+                if(IsEnemy)
+                    printf("\nEnemy %s walked down \n", ClassName.c_str());  //Console.WriteLine($"Enemy {EnemyIndex} walked left\n");
+                else
+                    printf("\nPlayer %s walked down \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
+            }
+            else
+            {
+                printf("Current index invalid");
             }
         }
     }
+    return;
 }
 
 bool Character::CheckCloseTargets(Grid* battlefield)
