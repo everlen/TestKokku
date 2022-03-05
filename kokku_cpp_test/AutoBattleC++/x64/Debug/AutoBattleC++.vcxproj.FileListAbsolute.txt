@@ -1,1 +1,2 @@
 U:\GameDev\Kokku\TestKokku\kokku_cpp_test\AutoBattleC++\x64\Debug\AutoBattleC++.exe
+U:\GameDev\Testes\TestKokku\kokku_cpp_test\AutoBattleC++\x64\Debug\AutoBattleC++.exe

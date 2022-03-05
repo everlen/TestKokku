@@ -1,8 +1,6 @@
 #pragma once
 #include "Character.h"
 #include "Types.h"
-#include <list>
-#include <iostream>
 #include "Grid.h"
 using namespace std;
 class BattleField
@@ -11,16 +9,16 @@ public:
 
 	BattleField();
 
-	Grid* grid;
+	Grid* GridBattle;
 	Types::GridBox* PlayerCurrentLocation;
 	Types::GridBox* EnemyCurrentLocation;
 	std::vector<Character*> AllPlayers; // Update list type to vector of ponters
 	Character* PlayerCharacter; // Update type of variable to simple ponter
 	Character* EnemyCharacter; // Update type of variable to simple ponter
-	int currentTurn = 0;
-	int numberOfPossibleTiles = 0;
-	int numberOfXGrids = 8;
-	int numberOfYGrids = 20;
+	int CurrentTurn = 0;
+	int NumberOfPossibleTiles = 0;
+	int NumberOfXGrids = 8;
+	int NumberOfYGrids = 10;
 
 	void Setup();
 

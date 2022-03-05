@@ -1,7 +1,5 @@
 #include "Grid.h"
 #include "BattleField.h"
-#include "Types.h"
-#include "Character.h"
 #include <iostream>
 #include <list>
 #include <string>
@@ -10,14 +8,14 @@ using namespace std;
 
 BattleField::BattleField() {
     
-    grid = new Grid(numberOfXGrids, numberOfYGrids);
+    GridBattle = new Grid(NumberOfXGrids, NumberOfYGrids);
     AllPlayers = {};
     PlayerCurrentLocation = nullptr; // initialized all variables in cronstruct like nullptr
     EnemyCurrentLocation = nullptr;
     PlayerCharacter = nullptr;
     EnemyCharacter = nullptr;
     int currentTurn = 0;
-    int numberOfPossibleTiles = grid->TotalGrids; //fix the incorrect assignment had invalid value chance
+    int numberOfPossibleTiles = GridBattle->TotalGrids; //fix the incorrect assignment had invalid value chance
 }
 
 void BattleField::Setup()
@@ -79,8 +77,8 @@ void BattleField::StartGame()
 {
     //populates the character variables and targets
  
-    EnemyCharacter->target = PlayerCharacter; //Update reference type to right received the other ponter
-    PlayerCharacter->target = EnemyCharacter; //Update reference type to right received the other ponter
+    EnemyCharacter->Target = PlayerCharacter; //Update reference type to right received the other ponter
+    PlayerCharacter->Target = EnemyCharacter; //Update reference type to right received the other ponter
     AlocatePlayerCharacter(); // Alter call function to remove redundance function
     AlocateEnemyCharacter(); // Update call location to more control
     AllPlayers.insert(AllPlayers.begin(), PlayerCharacter); //Update reference type to received the correct reference 
@@ -91,8 +89,8 @@ void BattleField::StartGame()
 
 void BattleField::StartTurn() {
 
-    printf("----TURN %i----\n", currentTurn+1);
-    if (currentTurn == 0) // I make a sort start character function
+    printf("----TURN %i----\n", CurrentTurn+1);
+    if (CurrentTurn == 0) // I make a sort start character function
     {
         int index =  GetRandomInt(0, 2);
         if(index != 0)
@@ -104,30 +102,33 @@ void BattleField::StartTurn() {
     }
 
     for (int i = 0; i < AllPlayers.size(); i++) { //Simplified the for
-        AllPlayers[i]->StartTurn(grid);
+        AllPlayers[i]->StartTurn(GridBattle);
     }
-    grid->drawBattlefield(grid->xLength, grid->yLength, PlayerCharacter->currentBox.index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
-    currentTurn++;
+    GridBattle->drawBattlefield(GridBattle->XLength, GridBattle->YLength, PlayerCharacter->CurrentBox.Index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
+    CurrentTurn++;
     HandleTurn();
 }
 
 void BattleField::HandleTurn()
 {
-    if(currentTurn>0)
+    if(CurrentTurn>0)
     {
         if(PlayerCharacter->Health <= 0 && EnemyCharacter->Health <= 0)
         {
             printf("NO CONTEXT.\n");
+            system("pause");
             return;
         }
         else if (PlayerCharacter->Health <= 0)
         {
             printf("YOU LOSE!\n");
+            system("pause");
             return;
         }
         else if (EnemyCharacter->Health <= 0)
         {
-            printf("YOU WIN!");
+            printf("YOU WIN!\n");
+            system("pause");
             return;
         }
         else
@@ -142,7 +143,7 @@ void BattleField::HandleTurn()
     }
     else
     {
-        grid->drawBattlefield(grid->xLength, grid->yLength, PlayerCharacter->currentBox.index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
+        GridBattle->drawBattlefield(GridBattle->XLength, GridBattle->YLength, PlayerCharacter->CurrentBox.Index, PlayerCharacter->Icon, EnemyCharacter->Icon); // Add draw function here to more control
         printf("\n");
         printf("Send 'P' to start game...\n"); //Update method to pass turn
         printf("\n");
@@ -160,15 +161,15 @@ int BattleField::GetRandomInt(int min, int max)
 
 void BattleField::AlocatePlayerCharacter()
 {
-    int Random = GetRandomInt(0, grid->TotalGrids-1); //Update to random number get value of dynamic grids numbers
-    Types::GridBox* RandomLocation = &grid->grids[Random]; //I simplified the method to get RandomLocation
+    int Random = GetRandomInt(0, GridBattle->TotalGrids-1); //Update to random number get value of dynamic grids numbers
+    Types::GridBox* RandomLocation = &GridBattle->grids[Random]; //I simplified the method to get RandomLocation
 
-    if (!RandomLocation->ocupied)
+    if (!RandomLocation->Ocupied)
     {
         //Types::GridBox* PlayerCurrentLocation = RandomLocation;
         PlayerCurrentLocation = RandomLocation;
-        RandomLocation->ocupied = true;
-        PlayerCharacter->currentBox = *RandomLocation;
+        RandomLocation->Ocupied = true;
+        PlayerCharacter->CurrentBox = *RandomLocation;
     }
     else
     {
@@ -179,14 +180,14 @@ void BattleField::AlocatePlayerCharacter()
 void BattleField::AlocateEnemyCharacter()
 {
     
-    int Random = GetRandomInt(0, grid->TotalGrids-1); //Update to random number get value of dynamic grids numbers
-    Types::GridBox* RandomLocation = &grid->grids[Random]; //I simplified the method to get RandomLocation
+    int Random = GetRandomInt(0, GridBattle->TotalGrids-1); //Update to random number get value of dynamic grids numbers
+    Types::GridBox* RandomLocation = &GridBattle->grids[Random]; //I simplified the method to get RandomLocation
     
-    if (!RandomLocation->ocupied)
+    if (!RandomLocation->Ocupied)
     {
         EnemyCurrentLocation = RandomLocation;
-        RandomLocation->ocupied = true;
-        EnemyCharacter->currentBox = *RandomLocation;
+        RandomLocation->Ocupied = true;
+        EnemyCharacter->CurrentBox = *RandomLocation;
     }
     else
     {

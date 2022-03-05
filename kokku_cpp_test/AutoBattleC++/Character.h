@@ -20,9 +20,9 @@ public:
     string ClassName; //Add your class name to better control
 
     //Character Target{ get; set; }
-    Character* target;
+    Character* Target;
     //GridBox currentBox;
-    Types::GridBox currentBox;
+    Types::GridBox CurrentBox;
     
     bool IsDead;
     char Icon;
@@ -45,6 +45,6 @@ public:
 
     float Attack(Character* target);
 
-
+    void ApplyLocomotionEffect(Grid* battlefield);
 };
 

@@ -12,8 +12,8 @@ public:
 
     std::vector<Types::GridBox> grids;
 
-    int xLength;
-    int yLength;
+    int XLength;
+    int YLength;
     int TotalGrids; // create this variable to better control of last index in vector grids
     
     // prints the matrix that indicates the tiles of the battlefield

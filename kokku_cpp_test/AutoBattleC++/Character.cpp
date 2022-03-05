@@ -14,8 +14,8 @@ Character::Character(Types::CharacterClass characterClass)
     Icon = 'X';
     string ClassNames[] = {"Paladin", "Warrior", "Cleric", "Archer"}; //Add vector of class names
     ClassName = ClassNames[characterClass -1]; //Set name Class in character constructor
-    currentBox = *new Types::GridBox(); //Fix constructor adding a initialization in this variable
-    target = this; //Fix warning not initializate
+    CurrentBox = *new Types::GridBox(); //Fix constructor adding a initialization in this variable
+    Target = this; //Fix warning not initializate
     
     if(characterClass == 1) //Class attributes config
     {
@@ -46,7 +46,7 @@ Character::~Character()
 
 bool Character::TakeDamage(float amount) 
 {
-	if ((Health -= BaseDamage) <= 0) 
+	if ((Health -= amount) <= 0) 
 	{
 		Die();
 		return true;
@@ -71,31 +71,41 @@ void Character::StartTurn(Grid* battlefield)
 {
     if (CheckCloseTargets(battlefield))
     {
-        const float CurrentDamage = Attack(Character::target);
-
+        const float CurrentMultiplyDamage = Attack(Character::Target);
+        if(CurrentMultiplyDamage > 1)
+        {
+            printf("CRITICAL EFFECT!!! >>> ");
+            int index = std::rand() % 3;
+            if(index == 0)
+            {
+                printf("ATTACKS MOVED THE TARGET... ");
+                ApplyLocomotionEffect(battlefield);  
+            }            
+        }
+        Target->TakeDamage(BaseDamage * CurrentMultiplyDamage);
         if(IsEnemy)
         {
-            printf("Enemy %s attack the player %s | Damage: %f \n", ClassName.c_str(), target->ClassName.c_str(), CurrentDamage);
-            printf("Player Health: %f\n", target->Health);            
+            printf("Enemy %s attack the player %s | Damage: %f \n", ClassName.c_str(), Target->ClassName.c_str(), BaseDamage * CurrentMultiplyDamage);
+            printf("Player Health: %f\n", Target->Health);            
         }
         else
         {
-            printf("Player %s attack the enemy %s | Damage: %f \n", ClassName.c_str(), target->ClassName.c_str(), CurrentDamage);
-            printf("Enemy Health: %f\n", target->Health);  
+            printf("Player %s attack the enemy %s | Damage: %f \n", ClassName.c_str(), Target->ClassName.c_str(), BaseDamage * CurrentMultiplyDamage);
+            printf("Enemy Health: %f\n", Target->Health);  
         }
     }
     else
     {   // if there is no target close enough, calculates in wich direction this character should move to be closer to a possible target
-        if (currentBox.xIndex > target->currentBox.xIndex + 1) //Verify if character is in side grid
+        if (CurrentBox.XIndex > Target->CurrentBox.XIndex + 1) //Verify if character is in side grid
         {
-            if(currentBox.xIndex > 0) // Fix incorrect use to "!="            
+            if(CurrentBox.XIndex > 0) // Fix incorrect use to "!="            
             {
-                currentBox.ocupied = false;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox.Ocupied = false;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
 
-                currentBox = battlefield->GetGridInLocation(currentBox.xIndex - 1, currentBox.yIndex); //Used this function to find array index in matrix location
-                currentBox.ocupied = true;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox = battlefield->GetGridInLocation(CurrentBox.XIndex - 1, CurrentBox.YIndex); //Used this function to find array index in matrix location
+                CurrentBox.Ocupied = true;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
                 
                 if(IsEnemy)
                     printf("Enemy %s walked up \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
@@ -107,16 +117,16 @@ void Character::StartTurn(Grid* battlefield)
                 printf("Current index invalid");
             }                
         }
-        else if (currentBox.xIndex < target->currentBox.xIndex - 1)
+        else if (CurrentBox.XIndex < Target->CurrentBox.XIndex - 1)
         {
-            if(currentBox.xIndex < battlefield->xLength - 1)
+            if(CurrentBox.XIndex < battlefield->XLength - 1)
             {
-                currentBox.ocupied = false;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox.Ocupied = false;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
                 
-                currentBox = battlefield->GetGridInLocation(currentBox.xIndex + 1, currentBox.yIndex);
-                currentBox.ocupied = true;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox = battlefield->GetGridInLocation(CurrentBox.XIndex + 1, CurrentBox.YIndex);
+                CurrentBox.Ocupied = true;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
                 
                 if(IsEnemy)
                     printf("Enemy %s walked down \n", ClassName.c_str());  //Console.WriteLine($"Player {PlayerIndex} walked left\n");
@@ -128,15 +138,15 @@ void Character::StartTurn(Grid* battlefield)
                 printf("Current index invalid\n");
             }                                    
         }
-        else if (currentBox.yIndex > target->currentBox.yIndex + 1)
+        if (CurrentBox.YIndex > Target->CurrentBox.YIndex + 1)
         {
-            if(currentBox.yIndex > 0) // Fix incorrect use to "!="            
+            if(CurrentBox.YIndex > 0) // Fix incorrect use to "!="            
             {
-                currentBox.ocupied = false;
-                battlefield->grids[currentBox.index] = currentBox;
-                currentBox = battlefield->GetGridInLocation(currentBox.xIndex, currentBox.yIndex - 1);
-                currentBox.ocupied = true;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox.Ocupied = false;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
+                CurrentBox = battlefield->GetGridInLocation(CurrentBox.XIndex, CurrentBox.YIndex - 1);
+                CurrentBox.Ocupied = true;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
             
                 if(IsEnemy)
                     printf("Enemy %s walked left \n", ClassName.c_str());  //Console.WriteLine($"Enemy {EnemyIndex} walked left\n");
@@ -148,15 +158,15 @@ void Character::StartTurn(Grid* battlefield)
                 printf("Current index invalid");
             }
         }
-        else if (currentBox.yIndex < target->currentBox.yIndex - 1)
+        else if (CurrentBox.YIndex < Target->CurrentBox.YIndex - 1)
         {
-            if(currentBox.yIndex < battlefield->yLength - 1)
+            if(CurrentBox.YIndex < battlefield->YLength - 1)
             {
-                currentBox.ocupied = false;
-                battlefield->grids[currentBox.index] = currentBox;
-                currentBox = battlefield->GetGridInLocation(currentBox.xIndex, currentBox.yIndex + 1);
-                currentBox.ocupied = true;
-                battlefield->grids[currentBox.index] = currentBox;
+                CurrentBox.Ocupied = false;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
+                CurrentBox = battlefield->GetGridInLocation(CurrentBox.XIndex, CurrentBox.YIndex + 1);
+                CurrentBox.Ocupied = true;
+                battlefield->grids[CurrentBox.Index] = CurrentBox;
             
                 if(IsEnemy)
                     printf("Enemy %s walked right \n", ClassName.c_str());  //Console.WriteLine($"Enemy {EnemyIndex} walked left\n");
@@ -174,7 +184,7 @@ void Character::StartTurn(Grid* battlefield)
 
 bool Character::CheckCloseTargets(Grid* battlefield)
 {
-    if (((currentBox.xIndex <= target->currentBox.xIndex + Reach && currentBox.xIndex >= target->currentBox.xIndex) || (currentBox.xIndex >= target->currentBox.xIndex - Reach && currentBox.xIndex <= target->currentBox.xIndex)) && ((currentBox.yIndex <= target->currentBox.yIndex + Reach && currentBox.yIndex >= target->currentBox.yIndex)|| (currentBox.yIndex >= target->currentBox.yIndex - Reach && currentBox.yIndex <= target->currentBox.yIndex))) //Verify if character is in side grid
+    if (((CurrentBox.XIndex <= Target->CurrentBox.XIndex + Reach && CurrentBox.XIndex >= Target->CurrentBox.XIndex) || (CurrentBox.XIndex >= Target->CurrentBox.XIndex - Reach && CurrentBox.XIndex <= Target->CurrentBox.XIndex)) && ((CurrentBox.YIndex <= Target->CurrentBox.YIndex + Reach && CurrentBox.YIndex >= Target->CurrentBox.YIndex)|| (CurrentBox.YIndex >= Target->CurrentBox.YIndex - Reach && CurrentBox.YIndex <= Target->CurrentBox.YIndex))) //Verify if character is in side grid
         return true;
     else    
         return false;
@@ -186,12 +196,35 @@ float Character::Attack(Character* target)
     int index = std::rand() % 5;
     if(index == 0)
     {
-        printf("CRITICAL EFFECT!!! >>> ");
         CurrentMultipyDamage = DamageMultiplier; //Attack critical effect
-    }
-
-    target->Health = target->Health - BaseDamage * CurrentMultipyDamage;
-    
-    return BaseDamage * CurrentMultipyDamage;
+    }    
+    return CurrentMultipyDamage;
 }
 
+void Character::ApplyLocomotionEffect(Grid* battlefield)
+{
+    Target->CurrentBox.Ocupied = false; // Force moved when take a critical attack
+    battlefield->grids[Target->CurrentBox.Index] = Target->CurrentBox;
+    int AuxXIndex = Target->CurrentBox.XIndex;
+    int AuxYIndex = Target->CurrentBox.YIndex;
+    if(Target->CurrentBox.XIndex > CurrentBox.XIndex && Target->CurrentBox.XIndex < battlefield->XLength-1)
+    {
+        AuxXIndex = Target->CurrentBox.XIndex + 1;
+    }
+    else if(Target->CurrentBox.XIndex < CurrentBox.XIndex && Target->CurrentBox.XIndex > 0)
+    {
+        AuxXIndex = Target->CurrentBox.XIndex - 1;
+    }
+    if(Target->CurrentBox.YIndex > CurrentBox.YIndex && Target->CurrentBox.YIndex < battlefield->YLength-1)
+    {
+        AuxYIndex = Target->CurrentBox.YIndex + 1;
+    }
+    else if(Target->CurrentBox.YIndex < CurrentBox.YIndex && Target->CurrentBox.YIndex > 0)
+    {
+        AuxYIndex = Target->CurrentBox.YIndex - 1;
+    }
+            
+    Target->CurrentBox = battlefield->GetGridInLocation(AuxXIndex, AuxYIndex);
+    Target->CurrentBox.Ocupied = true;
+    battlefield->grids[Target->CurrentBox.Index] = Target->CurrentBox;
+}
