@@ -19,8 +19,8 @@ public:
 	Character* EnemyCharacter; // Update type of variable to simple ponter
 	int currentTurn = 0;
 	int numberOfPossibleTiles = 0;
-	int numberOfXGrids = 10;
-	int numberOfYGrids = 10;
+	int numberOfXGrids = 8;
+	int numberOfYGrids = 20;
 
 	void Setup();
 

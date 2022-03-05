@@ -59,5 +59,5 @@ void Grid::drawBattlefield(int Lines, int Columns, int PlayerIndexGrid, char Pla
 
 Types::GridBox Grid::GetGridInLocation(int x, int y)
 {
-    return grids[xLength * x + y];
+    return grids[yLength * x + y];
 }

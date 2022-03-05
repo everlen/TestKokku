@@ -186,7 +186,7 @@ float Character::Attack(Character* target)
     int index = std::rand() % 5;
     if(index == 0)
     {
-        printf("CRITICAL EFFECT!!!\n");
+        printf("CRITICAL EFFECT!!! >>> ");
         CurrentMultipyDamage = DamageMultiplier; //Attack critical effect
     }
 
